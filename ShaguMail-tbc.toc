@@ -1,0 +1,8 @@
+## Interface: 20400
+## Title: |cff33ffccShagu|cffffffffMail
+## Author: Shagu
+## Notes: An Achievement Alike Notification System For Custom Events
+## Version: GIT
+## OptionalDeps: pfUI-tbc
+
+ShaguMail.lua
