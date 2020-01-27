@@ -43,7 +43,7 @@ mail.button = CreateFrame("Button", "ShaguMailOpenAll", InboxFrame, "UIPanelButt
 mail.button:SetPoint("BOTTOM", -10, 95)
 mail.button:SetWidth(100)
 mail.button:SetHeight(20)
-mail.button:SetText(T["Open All"])
+mail.button:SetText("Open All")
 mail.button:SetScript("OnClick", function()
   running, index = true, 1
 end)
