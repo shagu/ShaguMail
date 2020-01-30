@@ -34,6 +34,13 @@ end)
 
 mail:SetScript("OnUpdate", function()
   if ( this.tick or 0) < GetTime() then CheckInbox() this.tick = GetTime() + 1 end
+
+  if GetInboxNumItems() > 0 and not running then
+    mail.button:Enable()
+  else
+    mail.button:Disable()
+  end
+
   if not running then return end
   if index > GetInboxNumItems() then
     this:Stop("Done")
