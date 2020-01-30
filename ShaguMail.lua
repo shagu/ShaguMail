@@ -59,6 +59,7 @@ mail:SetScript("OnUpdate", function()
 end)
 
 mail.Start = function()
+  DEFAULT_CHAT_FRAME:AddMessage("Processing |cff33ffcc" .. GetInboxNumItems() .. "|r Mails")
   money = GetMoney()
   running = true
   index = 1
