@@ -19,7 +19,6 @@ end
 local index, running, money, stalled, mailcount, lastcount
 local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
-mail:RegisterEvent("MAIL_INBOX_UPDATE")
 mail:RegisterEvent("PLAYER_MONEY")
 mail:RegisterEvent("BAG_UPDATE")
 mail:SetScript("OnEvent", function()
@@ -29,9 +28,7 @@ mail:SetScript("OnEvent", function()
     elseif arg1 == ERR_ITEM_MAX_COUNT then
       index = index + 1
     end
-  elseif event == "MAIL_INBOX_UPDATE" then
-    index = 1
-  else
+  elseif stalled then
     stalled = nil
   end
 end)
@@ -86,6 +83,7 @@ mail:SetScript("OnUpdate", function()
   TakeInboxMoney(index)
   TakeInboxItem(index)
   GetInboxText(index)
+  index = 1
 end)
 
 mail.Start = function()
