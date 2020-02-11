@@ -16,10 +16,12 @@ local function BeautifyGoldString(money)
   end
 end
 
-local index, running, money
+local index, running, money, stalled, mailcount
 local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
 mail:RegisterEvent("MAIL_INBOX_UPDATE")
+mail:RegisterEvent("PLAYER_MONEY")
+mail:RegisterEvent("BAG_UPDATE")
 mail:SetScript("OnEvent", function()
   if event == "UI_ERROR_MESSAGE" then
     if running and arg1 == ERR_INV_FULL then
@@ -29,28 +31,37 @@ mail:SetScript("OnEvent", function()
     end
   elseif event == "MAIL_INBOX_UPDATE" then
     index = 1
+  else
+    stalled = nil
   end
 end)
 
 mail:SetScript("OnUpdate", function()
   if ( this.tick or 0) < GetTime() then CheckInbox() this.tick = GetTime() + 1 end
 
-  if GetInboxNumItems() > 0 and not running then
+  mailcount = GetInboxNumItems()
+  if mailcount > 0 and not running then
     mail.button:Enable()
   else
     mail.button:Disable()
   end
 
   if not running then return end
-  if index > GetInboxNumItems() then
+
+  -- wait for mail events to be processed
+  if stalled and stalled > GetTime() then return end
+
+  if index > mailcount then
     this:Stop("Done")
   else
-    local _, _, _, _, money, cod, _, item, _, _, _, _, gm = GetInboxHeaderInfo(index)
+    local _, _, _, subject, money, cod, _, item, _, _, _, _, gm = GetInboxHeaderInfo(index)
     -- skip gm, cod and text-only mails
     if gm or cod > 0 or ( money <= 0 and not item ) then
       index = index + 1
       return
     end
+
+    stalled = (item or money > 0) and GetTime() + .5 or nil
 
     TakeInboxMoney(index)
     TakeInboxItem(index)
