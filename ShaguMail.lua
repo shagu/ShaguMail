@@ -40,33 +40,47 @@ mail:SetScript("OnUpdate", function()
   if ( this.tick or 0) < GetTime() then CheckInbox() this.tick = GetTime() + 1 end
 
   mailcount = GetInboxNumItems()
+
+  -- enable/disable the mail opening button
   if mailcount > 0 and not running then
     mail.button:Enable()
   else
     mail.button:Disable()
   end
 
+  -- abort here while not opening
   if not running then return end
 
   -- wait for mail events to be processed
   if stalled and stalled > GetTime() then return end
 
+  -- while running we require fully updated mail data each tick
+  CheckInbox()
+  mailcount = GetInboxNumItems()
+
+  -- check if our index exceeded the available mails and stop
   if index > mailcount then
     this:Stop("Done")
-  else
-    local _, _, _, subject, money, cod, _, item, _, _, _, _, gm = GetInboxHeaderInfo(index)
-    -- skip gm, cod and text-only mails
-    if gm or cod > 0 or ( money <= 0 and not item ) then
-      index = index + 1
-      return
-    end
-
-    stalled = (item or money > 0) and GetTime() + .5 or nil
-
-    TakeInboxMoney(index)
-    TakeInboxItem(index)
-    GetInboxText(index)
+    return
   end
+
+  -- read new mail data
+  local _, _, _, subject, money, cod, _, item, _, _, _, _, gm = GetInboxHeaderInfo(index)
+
+  -- skip gm, cod and text-only mails
+  if gm or cod > 0 or ( money <= 0 and not item ) then
+    index = index + 1
+    return
+  end
+
+  -- wait for events to signal an opened mail
+  stalled = (item or money > 0) and GetTime() + .5 or nil
+
+  -- actually open the mail and save the count
+  lastcount = mailcount
+  TakeInboxMoney(index)
+  TakeInboxItem(index)
+  GetInboxText(index)
 end)
 
 mail.Start = function()
