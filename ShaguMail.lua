@@ -93,8 +93,8 @@ end
 mail.Stop = function(self, reason)
   local diff = GetMoney() - money
   local prefix = diff < 0 and "|cffff3333-|r" or "|cff33ff33+|r"
-  local money = prefix .. BeautifyGoldString(abs(diff))
-  DEFAULT_CHAT_FRAME:AddMessage("Mails " .. reason .. ". Money difference " .. money)
+  local money = diff ~= 0 and "Money difference " .. prefix .. BeautifyGoldString(abs(diff)) or ""
+  DEFAULT_CHAT_FRAME:AddMessage("Mails " .. reason .. ". " .. money)
   running = nil
 end
 
