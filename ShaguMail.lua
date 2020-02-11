@@ -16,7 +16,7 @@ local function BeautifyGoldString(money)
   end
 end
 
-local index, running, money, stalled, mailcount
+local index, running, money, stalled, mailcount, lastcount
 local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
 mail:RegisterEvent("MAIL_INBOX_UPDATE")
@@ -75,6 +75,11 @@ mail:SetScript("OnUpdate", function()
 
   -- wait for events to signal an opened mail
   stalled = (item or money > 0) and GetTime() + .5 or nil
+
+  -- notify for openining a new mail when the count changed
+  if not lastcount or mailcount < lastcount then
+    DEFAULT_CHAT_FRAME:AddMessage("Opening |cff33ffcc" .. subject .. "|r")
+  end
 
   -- actually open the mail and save the count
   lastcount = mailcount
