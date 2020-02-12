@@ -22,8 +22,8 @@ mail:RegisterEvent("UI_ERROR_MESSAGE")
 mail:RegisterEvent("PLAYER_MONEY")
 mail:RegisterEvent("BAG_UPDATE")
 mail:SetScript("OnEvent", function()
-  if event == "UI_ERROR_MESSAGE" then
-    if running and arg1 == ERR_INV_FULL then
+  if running and event == "UI_ERROR_MESSAGE" then
+    if arg1 == ERR_INV_FULL then
       this:Stop("Aborted")
     elseif arg1 == ERR_ITEM_MAX_COUNT then
       index = index + 1
