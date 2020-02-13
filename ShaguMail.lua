@@ -32,7 +32,7 @@ function IsAuctionMail(subject)
   end
 end
 
-local index, running, money, stalled, mailcount, lastcount
+local index, running, money, stalled, mailcount, lastcount, buttonstate
 local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
 mail:RegisterEvent("PLAYER_MONEY")
@@ -56,13 +56,17 @@ mail:SetScript("OnUpdate", function()
 
   -- enable/disable the mail opening button
   if mailcount > 0 and not running then
-    buttonstate = true
-    mail.button_all:Enable()
-    mail.button_ah:Enable()
+    if not buttonstate then
+      buttonstate = true
+      mail.button_all:Enable()
+      mail.button_ah:Enable()
+    end
   else
-    buttonstate = nil
-    mail.button_all:Disable()
-    mail.button_ah:Disable()
+    if buttonstate then
+      buttonstate = nil
+      mail.button_all:Disable()
+      mail.button_ah:Disable()
+    end
   end
 
   -- abort here while not opening
