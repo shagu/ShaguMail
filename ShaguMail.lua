@@ -16,6 +16,22 @@ local function BeautifyGoldString(money)
   end
 end
 
+local auctions = {
+  cancel  = gsub(AUCTION_REMOVED_MAIL_SUBJECT, "%%s", ".*"),
+  expire  = gsub(AUCTION_EXPIRED_MAIL_SUBJECT, "%%s", ".*"),
+  outbid  = gsub(AUCTION_OUTBID_MAIL_SUBJECT, "%%s", ".*"),
+  pending = gsub(AUCTION_INVOICE_MAIL_SUBJECT, "%%s", ".*"),
+  success = gsub(AUCTION_SOLD_MAIL_SUBJECT, "%%s", ".*"),
+  won     = gsub(AUCTION_WON_MAIL_SUBJECT, "%%s", ".*"),
+}
+
+function IsAuctionMail(subject)
+  if not subject then return end
+  for k, pattern in pairs(auctions) do
+    if strfind(subject, pattern) then return true end
+  end
+end
+
 local index, running, money, stalled, mailcount, lastcount
 local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
@@ -40,9 +56,13 @@ mail:SetScript("OnUpdate", function()
 
   -- enable/disable the mail opening button
   if mailcount > 0 and not running then
-    mail.button:Enable()
+    buttonstate = true
+    mail.button_all:Enable()
+    mail.button_ah:Enable()
   else
-    mail.button:Disable()
+    buttonstate = nil
+    mail.button_all:Disable()
+    mail.button_ah:Disable()
   end
 
   -- abort here while not opening
@@ -64,8 +84,8 @@ mail:SetScript("OnUpdate", function()
   -- read new mail data
   local _, _, _, subject, money, cod, _, item, _, _, _, _, gm = GetInboxHeaderInfo(index)
 
-  -- skip gm, cod and text-only mails
-  if gm or cod > 0 or ( money <= 0 and not item ) then
+  -- skip gm, cod and text-only mails (also skip non-auction mails)
+  if gm or cod > 0 or ( money <= 0 and not item ) or ( running == "AH" and not IsAuctionMail(subject)) then
     index = index + 1
     return
   end
@@ -86,10 +106,19 @@ mail:SetScript("OnUpdate", function()
   index = 1
 end)
 
+mail.OpenAll = function()
+  running = "ALL"
+  mail:Start()
+end
+
+mail.OpenAH = function()
+  running = "AH"
+  mail:Start()
+end
+
 mail.Start = function()
   DEFAULT_CHAT_FRAME:AddMessage("Processing |cff33ffcc" .. GetInboxNumItems() .. "|r Mails")
   money = GetMoney()
-  running = true
   index = 1
 end
 
@@ -102,10 +131,19 @@ mail.Stop = function(self, reason)
 end
 
 -- open all button
-mail.button = CreateFrame("Button", "ShaguMailOpenAll", InboxFrame, "UIPanelButtonTemplate")
-mail.button:SetPoint("BOTTOM", -10, 95)
-mail.button:SetWidth(100)
-mail.button:SetHeight(20)
-mail.button:SetText("Open All")
-mail.button:SetScript("OnClick", mail.Start)
-SkinButton(mail.button)
+mail.button_all = CreateFrame("Button", "ShaguMailOpenAll", InboxFrame, "UIPanelButtonTemplate")
+mail.button_all:SetPoint("BOTTOM", -50, 95)
+mail.button_all:SetWidth(75)
+mail.button_all:SetHeight(20)
+mail.button_all:SetText("Open All")
+mail.button_all:SetScript("OnClick", mail.OpenAll)
+SkinButton(mail.button_all)
+
+-- open all button
+mail.button_ah = CreateFrame("Button", "ShaguMailOpenAH", InboxFrame, "UIPanelButtonTemplate")
+mail.button_ah:SetPoint("BOTTOM", 30, 95)
+mail.button_ah:SetWidth(75)
+mail.button_ah:SetHeight(20)
+mail.button_ah:SetText("Open AH")
+mail.button_ah:SetScript("OnClick", mail.OpenAH)
+SkinButton(mail.button_ah)
