@@ -1,6 +1,6 @@
 # ShaguMail
 
-A TBC Addon/Library that tries to push opening mailboxes to the limits. It doesn't have any waits inside and fetches as fast as the server allows it to. This might lead to server messages, like internal mail errors. The addon focused on simplicity and is using as less code as possible. It might not work on your server, feel free to open an issue in case of trouble.
+A World of Warcraft: The Burning Crusade (2.4.3) Addon that tries to push opening mailboxes to the limits. It doesn't have any waits inside and fetches as fast as the server allows it to. This might lead to server messages, like internal mail errors. The addon focused on simplicity and is using as less code as possible. It might not work on your server, feel free to open an issue in case of trouble.
 
 **WARNING: Use at your own risk! This addon is still in early development and contains bugs.**
 
