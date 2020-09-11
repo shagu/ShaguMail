@@ -16,6 +16,8 @@ local function BeautifyGoldString(money)
   end
 end
 
+local AUCTION_INVOICE_MAIL_SUBJECT = AUCTION_INVOICE_MAIL_SUBJECT or "Sale Pending: %s"
+
 local auctions = {
   cancel  = gsub(AUCTION_REMOVED_MAIL_SUBJECT, "%%s", ".*"),
   expire  = gsub(AUCTION_EXPIRED_MAIL_SUBJECT, "%%s", ".*"),
