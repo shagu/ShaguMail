@@ -39,7 +39,14 @@ local mail = CreateFrame("Frame", "ShaguMail", MailFrame)
 mail:RegisterEvent("UI_ERROR_MESSAGE")
 mail:RegisterEvent("PLAYER_MONEY")
 mail:RegisterEvent("BAG_UPDATE")
+mail:RegisterEvent("MAIL_CLOSED")
 mail:SetScript("OnEvent", function()
+  -- abort when mailbox is closed
+  if running and event == "MAIL_CLOSED" then
+    this:Stop("Aborted")
+    return
+  end
+
   if running and event == "UI_ERROR_MESSAGE" then
     if arg1 == ERR_INV_FULL then
       this:Stop("Aborted")
